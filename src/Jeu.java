@@ -101,12 +101,6 @@ public class Jeu {
             executerTour();
         }
 
-        executerTour();
-
-        executerTour();
-
-        executerTour();
-
         if(pioche.getNbCartes() == 0){
             System.out.println("Vous avez perdu la partie car la pioche est vide !");
         }else{
