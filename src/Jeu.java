@@ -34,7 +34,9 @@ public class Jeu {
 
             if(c == null) break;
 
+            c.retourner();
             this.frise.ajouterCarteTrie(c);
+        
         }
     }
 
