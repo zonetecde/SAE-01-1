@@ -43,26 +43,41 @@ public class Jeu {
     private void executerTour(){
         afficherEtatPartie();
 
-        // Demander quelle carte jouer ...
-        System.out.println("\nquelle carte de votre main ?");
-        int nbCarte = sc.nextInt();
-        Carte carteJouee = this.main.getCarte(nbCarte);
+        System.out.println("quelle carte de votre main ?");
+        Carte carteJouee = null;
+        int nbCarte = -1;
+        while(carteJouee == null){
+            nbCarte = sc.nextInt();
+            carteJouee = this.main.getCarte(nbCarte);
+        }
         System.out.println(carteJouee.toString());
 
-        // Demander quelle place jouer cette carte
-
         System.out.println("derriere quelle carte de la frise ?");
-        int placeCarte = sc.nextInt();
-        System.out.println("entre ....\n     - "+this.frise.getPaquet().getCarte(placeCarte)+"\n     - "+this.frise.getPaquet().getCarte(placeCarte+1));
+        int placeCarte = -2;
+
+        while(placeCarte < 0 || placeCarte >= this.frise.getPaquet().getNbCartes()){
+            placeCarte = sc.nextInt();
+        }
+
+        if(this.frise.getPaquet().getCarte(placeCarte+1) == null){
+            System.out.println("après ....\n     - "+this.frise.getPaquet().getCarte(placeCarte));
+        }else{
+            System.out.println("entre ....\n     - "+this.frise.getPaquet().getCarte(placeCarte)+"\n     - "+this.frise.getPaquet().getCarte(placeCarte+1));
+        }
 
         carteJouee.retourner();
+        System.out.println(carteJouee);
         boolean resultat = this.frise.insererCarteApres(carteJouee, placeCarte);
-        this.main.retirerCarte(nbCarte);
 
         if(resultat){
             System.out.println(carteJouee.toString()+"\n !!! Une carte de placee !!!");
+
+            this.main.retirerCarte(nbCarte);
         }else{
             System.out.println(carteJouee.toString()+"\n !!! La carte n'est pas au bon endroit !!!");
+
+            this.main.retirerCarte(nbCarte);
+            this.main.ajouterCarteFin(this.pioche.piocherHasard());
         }
     }
 
@@ -82,8 +97,20 @@ public class Jeu {
     }
 
     public void commencerJeu(){
-        for(int i = 0; i < 3; i++){
+        while(pioche.getNbCartes() > 0 && main.getNbCartes() > 0){
             executerTour();
+        }
+
+        executerTour();
+
+        executerTour();
+
+        executerTour();
+
+        if(pioche.getNbCartes() == 0){
+            System.out.println("Vous avez perdu la partie car la pioche est vide !");
+        }else{
+            System.out.println("Vous avez gagné la partie !");
         }
     }
 }
