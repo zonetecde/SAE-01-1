@@ -156,10 +156,18 @@ public class Paquet {
      */
     public String toString(){
         StringBuffer str = new StringBuffer();
+
+
         str.append("--------------------------\n");
-        for (int i = 0; i < cartes.length; i++) {
-            str.append(this.cartes[i].toString() + "\n");
+
+        if(this.getNbCartes() == 0) str.append("Aucune carte dans le paquet\n");
+        else{
+            for (int i = 0; i < cartes.length; i++) {
+                str.append(i + ". " + this.cartes[i].toString() + "\n");
+            }
+    
         }
+
         str.append("--------------------------");
 
         return str.toString();
