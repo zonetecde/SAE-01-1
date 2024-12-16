@@ -61,4 +61,40 @@ public class TestFrise {
 		assertEquals("la carte événement 3 en 1933", true, frise.verifierCarteApres(new Carte("événement3:1933"), 2));
 	}
 
+	public void test5_verifierCarteApres_mauvaisEndroit(){
+		Frise frise = new Frise();
+
+		frise.ajouterCarteTrie(new Carte("événement2:1931"));
+		frise.ajouterCarteTrie(new Carte("événement3:1932"));
+		frise.ajouterCarteTrie(new Carte("événement3:1935"));
+
+		assertEquals("la carte événement 3 en 1933", false, frise.verifierCarteApres(new Carte("événement3:1933"), 1));
+	}
+
+	public void test6_insererCarteApres_bonEndroit(){
+		Frise frise = new Frise();
+
+		frise.ajouterCarteTrie(new Carte("événement2:1931"));
+		frise.ajouterCarteTrie(new Carte("événement3:1932"));
+		frise.ajouterCarteTrie(new Carte("événement3:1935"));
+
+		assertEquals("la carte événement 3 en 1933", true, frise.insererCarteApres(new Carte("événement3:1933"), 2));
+		assertEquals("la carte événement 3 en 1933", 4, frise.getPaquet().getNbCartes());
+		assertEquals("la carte événement 3 en 1933", 1933, frise.getPaquet().getCarte(2).getDate());
+	}
+
+	public void test7_insererCarteApres_mauvaisEndroit(){
+		Frise frise = new Frise();
+
+		frise.ajouterCarteTrie(new Carte("événement2:1931"));
+		frise.ajouterCarteTrie(new Carte("événement3:1932"));
+		frise.ajouterCarteTrie(new Carte("événement3:1935"));
+
+		assertEquals("la carte événement 3 en 1933", false, frise.insererCarteApres(new Carte("événement3:1933"), 3));
+		assertEquals("la carte événement 3 en 1933", 3, frise.getPaquet().getNbCartes());
+		assertEquals("la carte événement 3 en 1933", 1932, frise.getPaquet().getCarte(1).getDate());
+	}
+
+	
+
 }
