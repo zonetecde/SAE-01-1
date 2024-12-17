@@ -13,16 +13,27 @@ import netscape.javascript.JSObject;
 
 public class Gui extends Application {
     private WebEngine webEngine;
+    private Jeu jeu;
 
     // Classe de pont séparée avec accès au WebEngine
     public class JavaBridge {
-        public void showMessage(String message, JSObject resolveFunction) {
-            System.out.println("Message reçu depuis JavaScript : " + message);
-            
+        public void commencerPartieSolo(String pseudo, int nbreCarte, JSObject resolveFunction) {
+            // Initialisation de la partie
+            jeu.initialisationPartie(pseudo, nbreCarte);
+
+            // Récupère les infos actuelles de la partie pour les afficher
+            String[] infosPartie = jeu.recupererCartes();
+            var frise = infosPartie[0];
+            var main = infosPartie[1];
+
             // Retournement de la réponse à JavaScript
             Platform.runLater(() -> {
-                resolveFunction.call("test", "test2");
+                resolveFunction.call("afficherInfosPartie", frise, main);
             });
+        }
+
+        public void print(String message) {
+            System.out.println(message);
         }
 
         // Méthode optionnelle pour des interactions plus complexes
@@ -69,12 +80,11 @@ public class Gui extends Application {
             e.printStackTrace();
         }
 
-      
-
+        jeu = new Jeu(new String[] { "../cartes/timeline.txt", "../cartes/timeline2.txt" });
 
         // Configuration de la scène
         Scene scene = new Scene(webView, 800, 600);
-        stage.setTitle("JavaFX - Communication Java <-> JavaScript");
+        stage.setTitle("Le jeu de la frise chronologique");
         stage.setScene(scene);
         stage.show();
 

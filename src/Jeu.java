@@ -11,7 +11,7 @@ import java.util.Scanner;
  * @version 1.0
  */
 public class Jeu {
-    private Scanner sc;
+Scanner sc = new Scanner(System.in);
 
     // Cartes que possède le joueur
     private Paquet main;
@@ -44,18 +44,14 @@ public class Jeu {
      */
     public Jeu(String[] cheminFichierTimeline) {
         this.cheminFichierTimeline = cheminFichierTimeline;
-
-        this.sc = new Scanner(System.in);
         this.highScores = new HighScore();
-
-        initialisationPartie();        
     }
 
     /**
      * Méthode pour initialiser une partie
      * Initialise tous les attributs de la classe
      */
-    private void initialisationPartie(){
+    public void initialisationPartie(String pseudo, int nbreCarte){
         // Initialisation des attributs
         if(cheminFichierTimeline[0] == null) return;
 
@@ -72,20 +68,13 @@ public class Jeu {
         this.frise = new Frise();
         this.score = 0;
 
-        // Initialisation du nom du joueur
-      printColorer("Quel est votre nom ?", ANSI_YELLOW);
-        this.nomJoueur = sc.next();
+        this.nomJoueur = pseudo;
         printColorer("Bienvenue " + this.nomJoueur + " !", ANSI_BLUE);
 
         // Initialisation de la taille de la main du joueur
-        tMain = 0;
-        printColorer("Quelle est la taille de la main souhaitée ? (1-10)", ANSI_YELLOW);
-        while(tMain < 1 || tMain > 10){
-            tMain = sc.nextInt();
-        }
+        this.tMain = nbreCarte;
+        
         printColorer("Le nombre de carte a été définie à " + tMain + "\n", ANSI_BLUE);
-
-        attendre(1000);
 
         // Ajouter des cartes à la main du joueur
         for (int i = 0; i < tMain; i++) {
@@ -259,6 +248,19 @@ public class Jeu {
     }
 
     /**
+     * Méthode pour récupérer les cartes
+     * @return tableau de strings contenant les cartes,
+     * 0 : cartes de la frise
+     * 1 : cartes de la main
+     */
+    public String[] recupererCartes(){
+        String[] cartes = new String[2];
+        cartes[0] = this.frise.getPaquet().toString();
+        cartes[1] = this.main.toString();
+        return cartes;
+    }
+
+    /**
      * Méthode pour commencer le jeu
      */
     public void commencerJeu() {
@@ -268,7 +270,6 @@ public class Jeu {
 
         if (pioche.getNbCartes() == 0) {
             printColorer("Vous avez perdu la partie car la pioche est vide !", ANSI_RED);
-            
         } else {
             printColorer("Vous avez gagné la partie !", ANSI_GREEN);
         }
@@ -286,7 +287,6 @@ public class Jeu {
         String rejouer = sc.next();
 
         if (rejouer.equals("o")) {
-            initialisationPartie();        
             commencerJeu();
         } else {
             printColorer("Merci d'avoir joué !", ANSI_YELLOW);
