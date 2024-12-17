@@ -1,23 +1,31 @@
 import java.util.Random;
 
+/**
+ * Classe Paquet
+ * 
+ * Représente un paquet de cartes
+ * 
+ * @author Guillaume & Rayane
+ * @version 1.0
+ */
 public class Paquet {
     private Carte[] cartes;
 
-    /*
+    /**
      * Construteur par défaut
      */
     public Paquet(){
         cartes = new Carte[0];
     }
 
-    /*
+    /**
      * Constructeur avec un tableau de cartes
      */
     public Paquet(Carte[] c){
         this.cartes = c;
     }
 
-    /*
+    /**
      * Constructeur avec un nom de fichier
      * 
      * @param nomFichier le nom du fichier à lire
@@ -32,14 +40,16 @@ public class Paquet {
         }
     }
 
-    /*
+    /**
      * Retourne le nombre de cartes dans le paquet
+     * 
+     * @return le nombre de cartes dans le paquet
      */
     public int getNbCartes(){
         return this.cartes.length;
     }
 
-    /*
+    /**
      * Retourne vrai si la place est en dehors du tableau
      * 
      * @param place la place à vérifier
@@ -49,7 +59,7 @@ public class Paquet {
         return place < 0 || place >= this.getNbCartes();
     }
 
-    /*
+    /**
      * Retourne la carte à la place donnée
      * 
      * @param place la place de la carte à retourner
@@ -61,7 +71,7 @@ public class Paquet {
         return this.cartes[place];
     }
 
-    /*
+    /**
      * Ajoute une carte à la fin du paquet
      * 
      * @param c la carte à ajouter
@@ -78,7 +88,7 @@ public class Paquet {
         this.cartes = temp;
     }
 
-    /*
+    /**
      * Retire une carte à la place donnée
      * 
      * @param place la place de la carte à retirer
@@ -110,7 +120,7 @@ public class Paquet {
         return carteSupprimee;
     }
 
-    /*
+    /**
      * Ajoute une carte au début du paquet
      * 
      * @param carte la carte à ajouter
@@ -127,7 +137,7 @@ public class Paquet {
         this.cartes = temp;
     }
 
-    /*
+    /**
      * Ajoute une carte à la place donnée
      * 
      * @param c la carte à ajouter
@@ -151,8 +161,10 @@ public class Paquet {
         this.cartes = temp;
     }
 
-    /*
+    /**
      * Retourne une représentation du paquet
+     * 
+     * @return une représentation du paquet
      */
     public String toString(){
         StringBuffer str = new StringBuffer();
@@ -172,7 +184,12 @@ public class Paquet {
 
         return str.toString();
     }
-
+    
+    /**
+     * Pioche une carte au hasard dans le paquet
+     * 
+     * @return la carte piochée
+     */
     public Carte piocherHasard(){
         if(this.getNbCartes() == 0) return null;
 

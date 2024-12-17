@@ -6,7 +6,7 @@ public class ProgJeu {
             return;
         }   
 
-        Jeu jeu = new Jeu(args[0], args.length == 1 ? 5 : Integer.parseInt(args[1]));
+        Jeu jeu = new Jeu(args);
 
         jeu.commencerJeu();
     }

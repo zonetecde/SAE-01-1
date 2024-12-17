@@ -1,6 +1,5 @@
 import static libtest.Lanceur.lancer;
 import static libtest.OutilTest.assertEquals;
-import libtest.*;
 
 /**
  * classe de test qui permet de verifier que la classe Carte
@@ -42,7 +41,4 @@ public class TestCarte {
 		Carte c = new Carte("carte:1");
 		assertEquals("la carte a pour date 1", "??? -> carte", c.toString());
 	}
-
-	
-
 }

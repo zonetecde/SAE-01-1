@@ -1,6 +1,5 @@
 import static libtest.Lanceur.lancer;
 import static libtest.OutilTest.assertEquals;
-import libtest.*;
 
 /**
  * classe de test qui permet de verifier que la classe Frise
@@ -58,7 +57,7 @@ public class TestFrise {
 		frise.ajouterCarteTrie(new Carte("événement3:1932"));
 		frise.ajouterCarteTrie(new Carte("événement3:1935"));
 
-		assertEquals("la carte événement 3 en 1933", true, frise.verifierCarteApres(new Carte("événement3:1933"), 2));
+		assertEquals("la carte événement 3 en 1933", true, frise.verifierCarteApres(new Carte("événement3:1933"), 1));
 	}
 
 	public void test5_verifierCarteApres_mauvaisEndroit(){
@@ -68,7 +67,7 @@ public class TestFrise {
 		frise.ajouterCarteTrie(new Carte("événement3:1932"));
 		frise.ajouterCarteTrie(new Carte("événement3:1935"));
 
-		assertEquals("la carte événement 3 en 1933", false, frise.verifierCarteApres(new Carte("événement3:1933"), 1));
+		assertEquals("la carte événement 3 en 1933", false, frise.verifierCarteApres(new Carte("événement3:1933"), 0));
 	}
 
 	public void test6_insererCarteApres_bonEndroit(){
@@ -78,7 +77,7 @@ public class TestFrise {
 		frise.ajouterCarteTrie(new Carte("événement3:1932"));
 		frise.ajouterCarteTrie(new Carte("événement3:1935"));
 
-		assertEquals("la carte événement 3 en 1933", true, frise.insererCarteApres(new Carte("événement3:1933"), 2));
+		assertEquals("la carte événement 3 en 1933", true, frise.insererCarteApres(new Carte("événement3:1933"), 1));
 		assertEquals("la carte événement 3 en 1933", 4, frise.getPaquet().getNbCartes());
 		assertEquals("la carte événement 3 en 1933", 1933, frise.getPaquet().getCarte(2).getDate());
 	}
@@ -90,7 +89,7 @@ public class TestFrise {
 		frise.ajouterCarteTrie(new Carte("événement3:1932"));
 		frise.ajouterCarteTrie(new Carte("événement3:1935"));
 
-		assertEquals("la carte événement 3 en 1933", false, frise.insererCarteApres(new Carte("événement3:1933"), 3));
+		assertEquals("la carte événement 3 en 1933", false, frise.insererCarteApres(new Carte("événement3:1933"), 2));
 		assertEquals("la carte événement 3 en 1933", 3, frise.getPaquet().getNbCartes());
 		assertEquals("la carte événement 3 en 1933", 1932, frise.getPaquet().getCarte(1).getDate());
 	}

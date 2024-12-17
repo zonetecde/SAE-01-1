@@ -1,6 +1,11 @@
 
 /**
- * represente une carte trés simple juste avec une valeur
+ * Classe Carte
+ * 
+ * Cette classe permet de créer des cartes qui contiennent un événement et une date
+ * 
+ * @author Guillaume & Rayane
+ * @version 1.0
  */
 class Carte{
 
@@ -33,16 +38,28 @@ class Carte{
   }
 
   /**
-   * getter
+   * Méthode getNom revoit le nom de l'évènement
+   * 
+   * @return le nom de l'évènement
    */
   public String getNom(){
     return this.nom;
   }
 
+  /**
+   * Méthode getDate revoit la date de l'évènement
+   * 
+   * @return la date de l'évènement
+   */
   public int getDate(){
     return this.date;
   }
 
+  /**
+   * Méthode toString revoit une chaine de caractère contenant le nom de l'évènement et la date
+   * 
+   * @return une chaine de caractère contenant le nom de l'évènement et la date
+   */
   public String toString(){
     if(this.dateVisible)
       return this.date + " -> " + this.nom;
@@ -50,6 +67,9 @@ class Carte{
       return "??? -> " + this.nom;
   }
 
+  /**
+   * Méthode retourner permet de retourner la carte
+   */
   public void retourner() {
       this.dateVisible = !this.dateVisible;
   }
