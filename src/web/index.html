@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JavaFX WebView Example</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            function callJavaMethod() {
+                console.log("début de l'appel");
+
+                javaBridge.showMessage("Bonjour depuis JavaScript !", this);
+            }
+
+            function test(test) {
+                document.querySelector("h1").textContent = test;
+            }
+        </script>
+    </head>
+    <body>
+        <h1>Appel d'une méthode Java depuis JavaScript</h1>
+        <button onclick="callJavaMethod()">Cliquez pour appeler Java</button>
+    </body>
+</html>
