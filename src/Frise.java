@@ -38,10 +38,18 @@ public class Frise {
             carteSuivante = cartes.getCarte(p);
         }
 
-        if (carteSuivante == null) {
-            return c.getDate() > cartePrecedente.getDate();
+        if (cartePrecedente == null) {
+            if (carteSuivante == null) {
+            return true;
+            } else {
+            return c.getDate() < carteSuivante.getDate();
+            }
         } else {
+            if (carteSuivante == null) {
+            return c.getDate() > cartePrecedente.getDate();
+            } else {
             return c.getDate() > cartePrecedente.getDate() && c.getDate() < carteSuivante.getDate();
+            }
         }
     }
 
