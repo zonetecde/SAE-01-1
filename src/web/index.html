@@ -205,7 +205,7 @@
     </head>
     <body>
         <div class="flex items-center justify-center flex-col h-screen">
-            <div id="principale" class="bg-blue-200 p-8 flex items-center flex-col lg:border-4 lg:border-gray-600 lg:rounded-xl lg:shadow-2xl lg:shadow-gray-600 lg:w-10/12 w-full h-full lg:h-4/5 justify-center">
+            <div id="principale" class="bg-blue-200 p-8 flex items-center flex-col lg:border-4 lg:border-gray-600 lg:rounded-xl lg:shadow-2xl lg:shadow-gray-600 lg:w-10/12 w-full h-full lg:h-4/5 justify-center overflow-auto">
                 <h1 class="text-center text-3xl font-bold">Le jeu de la frise chronologique</h1>
                 <h3 class="mt-3 text-lg">- Par Guillaume Paquin et Rayane Staszewski -</h3>
 
@@ -221,7 +221,20 @@
                 </div>
 
                 <button class="mt-8 bg-blue-400 border-2 border-blue-500 font-bold py-2 px-4 rounded" onclick="startSingleplayerGame()">Commencer une partie solo</button>
-                <button class="mt-5 bg-blue-400 border-2 border-blue-500 font-bold py-2 px-4 rounded" onclick="callJavaMethod()">Commencer une partie multijoueur</button>
+
+                <br />
+                <br />
+
+                <p class="w-1/2 mx-auto text-center">
+                    Pour réaliser cette interface graphique communiquante avec la base de code Java, j'ai utilisé une WebView JavaFX. Cela nous a permis de créer une interface graphique en HTML/CSS (tailwind)/JS et de communiquer avec le code Java
+                    depuis javascript et vice-versa.
+                    <br />
+                    <br />
+                    Grâce au scrapping d'images sur le site Unsplash, nous avons pu récupérer des images pour chaque événement de la frise chronologique afin d'avoir un jeu plus visuel.
+                    <br />
+                    <br />
+                    Mon camarade Guillaume a pendant ce temps travaillé sur la partie multijoueur, qui malheuresement n'est pas compatible avec cette version de l'interface graphique. Voilà pourquoi on a seulement la partie solo.
+                </p>
             </div>
 
             <div id="jeu" class="bg-blue-200 p-8 flex items-center flex-col lg:border-4 lg:border-gray-600 lg:rounded-xl lg:shadow-2xl lg:shadow-gray-600 block lg:w-10/12 w-full h-full lg:h-4/5 hidden overflow-auto">

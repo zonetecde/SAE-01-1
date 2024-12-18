@@ -1,13 +1,24 @@
 public class ProgJeu {
     public static void main(String[] args) {
-        if(args.length < 1) {
+        // Execute la commande javac --module-path ./javafx-sdk/lib --add-modules javafx.controls,javafx.web *.java */ puis java --module-path ./javafx-sdk/lib --add-modules javafx.controls,javafx.web Gui dans le dossier src
 
-            System.out.println("Utilisation: java ProgJeu <fichier_timeline> <taille_main (defaut: 5)>");
-            return;
-        }   
+        ProcessBuilder pb = new ProcessBuilder("javac", "--module-path", "./javafx-sdk/lib", "--add-modules", "javafx.controls,javafx.web", "*.java");
 
-        Jeu jeu = new Jeu(args);
+        pb.inheritIO();
+        try {
+            pb.start().waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        jeu.commencerJeu();
+        pb = new ProcessBuilder("java", "--module-path", "./javafx-sdk/lib", "--add-modules", "javafx.controls,javafx.web", "Gui");
+
+        pb.inheritIO();
+        try {
+            pb.start().waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }

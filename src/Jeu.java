@@ -11,7 +11,7 @@ import java.util.Scanner;
  * @version 1.0
  */
 public class Jeu {
-Scanner sc = new Scanner(System.in);
+    Scanner sc = new Scanner(System.in);
 
     // Cartes que possède le joueur
     private Paquet main;
