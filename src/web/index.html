@@ -8,6 +8,7 @@
         <script>
             let frises = {};
             let mains = {};
+            let savedImgs = {};
 
             function startSingleplayerGame() {
                 const pseudo = document.getElementById("pseudo").value;
@@ -17,10 +18,10 @@
                     return;
                 }
 
-                let nbCarteInt = javaBridge.commencerPartieSolo(pseudo, nbCarte, this);
+                javaBridge.commencerPartieSolo(pseudo, nbCarte, this);
             }
 
-            function convertirStringEnObjet(paquet) {
+            async function convertirStringEnObjet(paquet) {
                 let lignes = paquet.split("\n");
                 // enlève la première et dernière ligne	(-----------)
                 lignes.shift();
@@ -34,16 +35,160 @@
                         date: elements[1].split("->")[0].trim(),
                         evenement: elements[1].split("->")[1].trim(),
                     };
+
+                    if (savedImgs[objet.evenement]) {
+                        // si l'image a déjà été téléchargée
+                        objet.img = savedImgs[objet.evenement];
+                    } else {
+                        // essaie de trouver une img pour cet elt
+                        const url = `https://unsplash.com/fr/s/photos/${objet.evenement.replace("L'invention de la", "")}`;
+                        // download le code source
+
+                        const response = await fetch(url);
+                        const text = await response.text();
+                        // trouve l'url de l'image entre `, 100vw" srcSet="` et le prochain espace vide suivant
+                        const img = text.substring(text.indexOf(`, 100vw" srcSet="`) + `, 100vw" srcSet="`.length, text.indexOf(" ", text.indexOf(`, 100vw" srcSet="`) + `, 100vw" srcSet="`.length));
+                        objet.img = img.replace("w=100", "w=800");
+
+                        savedImgs[objet.evenement] = objet.img;
+                    }
+
                     objets.push(objet);
+                }
+
+                return objets;
+            }
+
+            async function afficherInfosPartie(frise, main) {
+                frises = await convertirStringEnObjet(frise);
+                mains = await convertirStringEnObjet(main);
+
+                if (document.getElementById("jeu").classList.contains("hidden")) {
+                    document.getElementById("principale").classList.add("hidden");
+                    document.getElementById("jeu").classList.remove("hidden");
+                }
+
+                // afficher les cartes de la frise
+                ajouterCartes(frises, "cartes-container-frise");
+
+                // afficher les cartes de la main
+                ajouterCartes(mains, "cartes-container-main");
+
+                if (mains.length === 0) {
+                    document.getElementById("titre-principal-jeu").innerText = "Vous avez gagné !";
                 }
             }
 
-            function afficherInfosPartie(frise, main) {
-                frises = convertirStringEnObjet(frise);
-                mains = convertirStringEnObjet(main);
+            async function afficherFaux(date) {
+                document.getElementById("titre-principal-jeu").innerText = "Mauvais emplacement ! La date était : " + date;
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                if (document.getElementById("titre-principal-jeu").innerText === "Mauvais emplacement ! La date était : " + date) {
+                    document.getElementById("titre-principal-jeu").innerText = "Le jeu de la frise chronologique";
+                }
+            }
 
-                document.getElementById("principale").classList.add("hidden");
-                document.getElementById("jeu").classList.remove("hidden");
+            function ajouterCartes(cartes, idContainer) {
+                const cartesContainer = document.getElementById(idContainer);
+                const cardTemplate = document.getElementById("card-template");
+
+                // enlever les cartes déjà présentes
+                cartesContainer.innerHTML = "";
+
+                for (let i = 0; i < cartes.length; i++) {
+                    const carte = cartes[i];
+
+                    javaBridge.print(idContainer + " ajout  de " + carte.evenement);
+
+                    try {
+                        const card = cardTemplate.cloneNode(true);
+                        card.querySelector(".evenement").innerText = carte.evenement;
+                        card.querySelector(".img").src = carte.img;
+                        card.querySelector(".date").innerText = `Date : ${carte.date}`;
+                        card.querySelector(".id").innerText = carte.id;
+                        card.classList.remove("hidden");
+                        card.id = `carte-${carte.id}`;
+                        cartesContainer.appendChild(card);
+
+                        if (idContainer === "cartes-container-main") {
+                            // enleve les boutons d'insertion
+                            card.querySelector(".inserer-droit").remove();
+                            card.querySelector(".inserer-gauche").remove();
+                            // ajoute un event listener pour la sélection
+                            card.classList.add("cursor-pointer");
+                            card.addEventListener("click", () => carteSelectionner(card));
+                        } else if (idContainer === "cartes-container-frise" && i < cartes.length - 1) {
+                            // enleve le bouton d'insertion à droite car pas la derniere carte
+                            card.querySelector(".inserer-droit").remove();
+                        }
+                    } catch (e) {
+                        javaBridge.print(e);
+                    }
+                }
+            }
+
+            async function carteSelectionner(carte) {
+                // si la carte est dans la main
+                if (carte.classList.contains("selected")) {
+                    // Retire l'effet de sélection
+                    carte.classList.remove("border-4");
+                    carte.classList.remove("border-blue-700");
+                    carte.classList.remove("scale-105");
+                    carte.classList.remove("selected");
+
+                    hidePossiblePosition();
+                } else {
+                    removeAllSelected();
+                    // Affiche un effet de sélection
+                    carte.classList.add("border-4");
+                    carte.classList.add("border-blue-700");
+                    carte.classList.add("scale-105");
+                    carte.classList.add("selected");
+
+                    showPossiblePosition();
+                }
+            }
+
+            function showPossiblePosition() {
+                const buttons = document.querySelectorAll(".inserer-gauche, .inserer-droit");
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].classList.remove("hidden");
+                }
+            }
+
+            function hidePossiblePosition() {
+                const buttons = document.querySelectorAll(".inserer-gauche, .inserer-droit");
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].classList.add("hidden");
+                }
+            }
+
+            function removeAllSelected() {
+                const cartes = document.querySelectorAll(".selected");
+                for (let i = 0; i < cartes.length; i++) {
+                    cartes[i].classList.remove("border-4");
+                    cartes[i].classList.remove("border-blue-700");
+                    cartes[i].classList.remove("scale-105");
+                    cartes[i].classList.remove("selected");
+                }
+            }
+
+            function insererGauche(carte) {
+                let carteSelected = document.querySelector(".selected");
+                let idCarte = carteSelected.querySelector(".id").innerText;
+
+                // position de l'insertion
+                let idPosition = parseInt(carte.parentElement.querySelector(".id").innerText);
+
+                javaBridge.insererCarte(idCarte, idPosition - 1, this);
+                hidePossiblePosition();
+            }
+
+            function insererLast() {
+                let carteSelected = document.querySelector(".selected");
+                let idCarte = parseInt(carteSelected.querySelector(".id").innerText);
+
+                javaBridge.insererCarte(idCarte, frises.length - 1, this);
+                hidePossiblePosition();
             }
         </script>
 
@@ -60,7 +205,7 @@
     </head>
     <body>
         <div class="flex items-center justify-center flex-col h-screen">
-            <div id="principale" class="bg-blue-200 p-8 flex items-center flex-col border-4 border-gray-600 rounded-xl shadow-2xl shadow-gray-600">
+            <div id="principale" class="bg-blue-200 p-8 flex items-center flex-col lg:border-4 lg:border-gray-600 lg:rounded-xl lg:shadow-2xl lg:shadow-gray-600 lg:w-10/12 w-full h-full lg:h-4/5 justify-center">
                 <h1 class="text-center text-3xl font-bold">Le jeu de la frise chronologique</h1>
                 <h3 class="mt-3 text-lg">- Par Guillaume Paquin et Rayane Staszewski -</h3>
 
@@ -79,9 +224,28 @@
                 <button class="mt-5 bg-blue-400 border-2 border-blue-500 font-bold py-2 px-4 rounded" onclick="callJavaMethod()">Commencer une partie multijoueur</button>
             </div>
 
-            <div id="jeu" class="bg-blue-200 p-8 flex items-center flex-col border-4 border-gray-600 rounded-xl shadow-2xl shadow-gray-600 hidden">
-                <h1 class="text-center text-3xl font-bold">Le jeu de la frise chronologique2</h1>
+            <div id="jeu" class="bg-blue-200 p-8 flex items-center flex-col lg:border-4 lg:border-gray-600 lg:rounded-xl lg:shadow-2xl lg:shadow-gray-600 block lg:w-10/12 w-full h-full lg:h-4/5 hidden overflow-auto">
+                <h1 class="text-center text-3xl font-bold" id="titre-principal-jeu">Le jeu de la frise chronologique</h1>
+                <div class="flex flex-col w-full">
+                    <p class="mt-6">Frise :</p>
+                    <div class="overflow-x-auto flex flex-row gap-x-3 mt-3 justify-center" id="cartes-container-frise"></div>
+                </div>
+
+                <div class="flex flex-col w-full">
+                    <p class="mt-6">Main :</p>
+                    <div class="flex flex-wrap flex-row gap-3 py-12 px-12 sm:px-0 sm:py-0 mt-3 justify-center" id="cartes-container-main"></div>
+                </div>
             </div>
+        </div>
+
+        <div class="text-center border-2 border-black rounded-2xl px-4 py-3 hidden bg-blue-300 max-w-[250px] min-w-[200px] duration-150 z-50 card relative" id="card-template">
+            <p class="evenement">test</p>
+            <img class="img mx-auto w-40 h-40 object-cover my-4 border-2 border-gray-600 rounded-lg" src="" alt="" />
+            <p class="date">Date : ????</p>
+            <p class="hidden id"></p>
+
+            <button class="absolute -left-14 top-1/2 -translate-y-1/2 bg-orange-600 text-white border-2 border-orange-800 px-3 rounded-lg py-1.5 font-bold inserer-gauche hidden" onclick="insererGauche(this)">Insérer ici</button>
+            <button class="absolute -right-14 top-1/2 -translate-y-1/2 bg-orange-600 text-white border-2 border-orange-800 px-3 rounded-lg py-1.5 font-bold inserer-droit hidden" onclick="insererLast()">Insérer ici</button>
         </div>
     </body>
 </html>

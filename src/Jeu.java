@@ -174,7 +174,8 @@ Scanner sc = new Scanner(System.in);
      * @param placeCarte La place de la carte
      * @param nbCarteChoisi L'indice de la carte choisie
      */
-    private void verifierEmplacement(Carte carteJouee, int placeCarte, int nbCarteChoisi){
+    private boolean verifierEmplacement(Carte carteJouee, int placeCarte, int nbCarteChoisi){
+        System.out.println(carteJouee.getNom() + " " + placeCarte + " " + nbCarteChoisi);
         boolean resultat = this.frise.insererCarteApres(carteJouee, placeCarte);
 
         if (resultat) {
@@ -182,6 +183,8 @@ Scanner sc = new Scanner(System.in);
 
             // Retirer la carte de la main du joueur
             this.main.retirerCarte(nbCarteChoisi);
+
+            return true;
         } else {
             printColorer("\n !!! La carte n'est pas au bon endroit !!!", ANSI_RED);
 
@@ -190,6 +193,8 @@ Scanner sc = new Scanner(System.in);
             // Ajoute une nouvelle carte à la fin de la main du joueur
             Carte c = this.pioche.piocherHasard();
             this.main.ajouterCarteFin(c);
+
+            return false;
         }
     }
 
@@ -291,5 +296,15 @@ Scanner sc = new Scanner(System.in);
         } else {
             printColorer("Merci d'avoir joué !", ANSI_YELLOW);
         }
+    }
+
+    public boolean insererCarte(int carteId, int positionInsertion){
+        Carte carteJouee = this.main.getCarte(carteId);
+        carteJouee.retourner();
+        return verifierEmplacement(carteJouee, positionInsertion, carteId);
+    }
+
+    public Carte getCarteMain(int carteId){
+        return this.main.getCarte(carteId);
     }
 }

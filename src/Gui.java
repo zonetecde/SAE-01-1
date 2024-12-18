@@ -29,32 +29,13 @@ public class Gui extends Application {
             // Retournement de la réponse à JavaScript
             Platform.runLater(() -> {
                 resolveFunction.call("afficherInfosPartie", frise, main);
+
+                ajoutBridge();                       
             });
         }
 
-        public void print(String message) {
-            System.out.println(message);
-        }
-
-        // Méthode optionnelle pour des interactions plus complexes
-        public void executeJavaScriptFunction(String functionName) {
-            Platform.runLater(() -> {
-                try {
-                    webEngine.executeScript(functionName);
-                } catch (Exception e) {
-                    System.err.println("Erreur lors de l'exécution de la fonction : " + e.getMessage());
-                }
-            });
-        }
-    }
-
-    @Override
-    public void start(Stage stage) {
-        // Création de la WebView
-        WebView webView = new WebView();
-        webEngine = webView.getEngine();
-
-        // Configuration du gestionnaire de chargement
+        private void ajoutBridge(){
+             // Configuration du gestionnaire de chargement
         webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
             if (newState == Worker.State.SUCCEEDED) {
                 try {
@@ -71,6 +52,64 @@ public class Gui extends Application {
                 }
             }
         });
+        }
+
+        public void print(String message) {
+            System.out.println(message);
+        }
+
+        public void insererCarte(int carteId, int positionInsertion, JSObject resolveFunction) {
+            System.out.println("Carte à insérer : " + carteId + " à la position : " + positionInsertion);	
+
+            int date = jeu.getCarteMain(carteId).getDate();
+
+            // Insertion de la carte
+            boolean success = jeu.insererCarte(carteId, positionInsertion);
+
+            // Récupère les infos actuelles de la partie pour les afficher
+            String[] infosPartie = jeu.recupererCartes();
+            var frise = infosPartie[0];
+            var main = infosPartie[1];
+
+            System.out.println(frise.toString() + " / " + main.toString());
+
+            // Retournement de la réponse à JavaScript
+            Platform.runLater(() -> {
+                resolveFunction.call("afficherInfosPartie", frise, main);
+
+                if(!success){
+                    resolveFunction.call("afficherFaux", date);
+                }
+
+                ajoutBridge();                       
+            });
+        }
+    }
+
+    @Override
+    public void start(Stage stage) {
+        // Création de la WebView
+        WebView webView = new WebView();
+        webEngine = webView.getEngine();
+
+        // Configuration du gestionnaire de chargement
+    // Configuration du gestionnaire de chargement
+    webEngine.getLoadWorker().stateProperty().addListener((obs, oldState, newState) -> {
+        if (newState == Worker.State.SUCCEEDED) {
+            try {
+                // Récupération de l'objet window JavaScript
+                JSObject window = (JSObject) webEngine.executeScript("window");
+                
+                // Création et enregistrement du pont Java
+                JavaBridge javaBridge = new JavaBridge();
+                window.setMember("javaBridge", javaBridge);
+                
+                System.out.println("Pont Java-JavaScript initialisé avec succès");
+            } catch (Exception e) {
+                System.err.println("Erreur lors de l'initialisation du pont : " + e.getMessage());
+            }
+        }
+    });
 
         // Chargement de la page HTML
         try {
@@ -88,7 +127,11 @@ public class Gui extends Application {
         stage.setScene(scene);
         stage.show();
 
-     
+        // maximazed
+        stage.setMaximized(true);
+
+       
+
     }
 
     public static void main(String[] args) {

@@ -10,6 +10,8 @@ public class Frise {
     }
 
     public void ajouterCarteTrie(Carte c) {
+        if(c == null) return;
+
         int i = 0;
     
         while (i < cartes.getNbCartes() && c.getDate() > cartes.getCarte(i).getDate()) {
@@ -25,28 +27,35 @@ public class Frise {
     
 
     public boolean verifierCarteApres(Carte c, int p) {
-        if (p < 0 || p >= cartes.getNbCartes()) {
-            return false;
-        }
+        if(c == null) return false;
+        if(p < -1 || p > cartes.getNbCartes()) return false;
 
-        if(p == 0 && this.cartes.getNbCartes() == 0) return true;
-
-        Carte cartePrecedente = cartes.getCarte(p - 1);
+        Carte cartePrecedente = null;
         Carte carteSuivante = null;
-        
-        if (p+1 < cartes.getNbCartes()) {
-            carteSuivante = cartes.getCarte(p);
+
+        if(cartes.getCarte(p) != null){
+            cartePrecedente = cartes.getCarte(p);
         }
 
-        if (carteSuivante == null) {
-            return c.getDate() > cartePrecedente.getDate();
-        } else {
-            return c.getDate() > cartePrecedente.getDate() && c.getDate() < carteSuivante.getDate();
+        if(cartes.getCarte(p+1) != null){
+            carteSuivante = cartes.getCarte(p+1);
+        }
+
+        if(cartePrecedente == null && carteSuivante == null){
+            return true;
+        }else if(cartePrecedente == null){
+            return c.getDate() < carteSuivante.getDate();
+        }else if(carteSuivante == null){
+            return cartePrecedente.getDate() < c.getDate();
+        }else{
+            return cartePrecedente.getDate() < c.getDate() && c.getDate() < carteSuivante.getDate();
         }
     }
 
 
     public boolean insererCarteApres(Carte c, int p) {
+        if(c == null) return false;
+
         if(cartes.getNbCartes() == 0 || verifierCarteApres(c, p)) {
             ajouterCarteTrie(c);
             return true;
